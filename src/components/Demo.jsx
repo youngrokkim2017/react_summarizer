@@ -9,6 +9,7 @@ const Demo = () => {
     summary: '',
   })
   const [allArticles, setAllArticles] = useState([])
+  const [copied, setCopied] = useState('')
 
   const [getSummary, { error, isFetching }] = useLazyGetSummaryQuery()
 
@@ -34,6 +35,12 @@ const Demo = () => {
 
       localStorage.setItem('articles', JSON.stringify(updatedArticles))
     }
+  }
+
+  const handleCopy = (copyUrl) => {
+    setCopied(copyUrl)
+    navigator.clipboard.writeText(copyUrl)
+    setTimeout(() => setCopied(false), 3000)
   }
 
   return (
@@ -66,14 +73,14 @@ const Demo = () => {
         </form>
         {/* browser url history */}
         <div className='flex flex-col gap-1 max-h-60 overflow-y-auto'>
-          {allArticles.map((article, index) => (
+          {allArticles.map((item, index) => (
             <div
               key={`link-${index}`}
-              onClick={() => setArticle(article)}
+              onClick={() => setArticle(item)}
               className='link_card'
             >
-              <div className='copy_btn'>
-                <img src={copy} alt="copy_icon" className='w-[40%] h-[40%] object-contain' />
+              <div className='copy_btn' onClick={() => handleCopy(item.url)}>
+                <img src={copied === item.url ? tick : copy} alt="copy_icon" className='w-[40%] h-[40%] object-contain' />
               </div>
               <p className='flex-1 font-satoshi text-blue-700 font-medium text-sm truncate'>
                 {item.url}
