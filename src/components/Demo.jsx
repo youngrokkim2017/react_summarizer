@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { copy, linkIcon, loader, tick } from '../assets'
+import { useLazyGetSummaryQuery } from '../services/article'
 
 const Demo = () => {
   const [article, setArticle] = useState({
@@ -8,10 +9,18 @@ const Demo = () => {
     summary: '',
   })
 
-  const handleSubmit = async (e) => {
-    // alert('submitted')
+  const [getSummary, { error, isFetching }] = useLazyGetSummaryQuery()
 
-    // api request
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const { data } = await getSummary({ articleUrl: article.url })
+
+    if (data?.summary) {
+      const newArticle = { ...article, summary: data.summary }
+
+      setArticle(newArticle)
+    }
   }
 
   return (
@@ -34,12 +43,12 @@ const Demo = () => {
           <button
             type='submit'
             className='
-              submit-btn
+              submit_btn
               peer-focus:border-gray-700
               peer-focus:text-gray-700
             '
           >
-            Submit
+            <p>↵</p>
           </button>
         </form>
         {/* browser url history */}
